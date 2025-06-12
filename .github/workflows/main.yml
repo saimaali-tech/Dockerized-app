@@ -38,7 +38,7 @@ jobs:
             docker pull saimaali079/docker:latest
 
             # Stop current container if exists
-            docker rm -f my_app || true
+            docker rm -f myapp || true
 
             # Run new container
-            docker run -d --name my_app -p 3001:3001 saimaali079/docker:latest
+            docker run -d --name myapp -p 3001:3001 saimaali079/docker:latest
