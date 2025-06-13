@@ -41,4 +41,5 @@ jobs:
             docker rm -f myapp || true
 
             # Run new container
+
             docker run -d --name myapp -p 3001:3001 saimaali079/docker:latest
