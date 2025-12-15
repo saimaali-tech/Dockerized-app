@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "myapp"        // Docker image name
+        CONTAINER_NAME = " unruffled_ramanujan"
+        HOST_PORT = "3001"
+        CONTAINER_PORT = "3001"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/<your-username>/<your-repo>.git' // Replace with your repo
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}:latest")
+                }
+            }
+        }
+
+        stage('Stop Existing Container') {
+            steps {
+                script {
+                    sh """
+                    if [ \$(docker ps -q -f name=${CONTAINER_NAME}) ]; then
+                        docker stop ${CONTAINER_NAME}
+                        docker rm ${CONTAINER_NAME}
+                    fi
+                    """
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    sh "docker run -d -p ${HOST_PORT}:${CONTAINER_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+    }
+}
